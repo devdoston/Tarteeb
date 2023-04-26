@@ -209,12 +209,12 @@ namespace Tarteeb.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GitHubUsername")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsVerififed")
+                    b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
@@ -230,7 +230,7 @@ namespace Tarteeb.Api.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TelegramUsername")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
@@ -241,15 +241,7 @@ namespace Tarteeb.Api.Migrations
                         .IsUnique()
                         .HasFilter("[Email] IS NOT NULL");
 
-                    b.HasIndex("GitHubUsername")
-                        .IsUnique()
-                        .HasFilter("[GitHubUsername] NULL");
-
                     b.HasIndex("TeamId");
-
-                    b.HasIndex("TelegramUsername")
-                        .IsUnique()
-                        .HasFilter("[TelegramUsername] NULL");
 
                     b.ToTable("Users");
                 });

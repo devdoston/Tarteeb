@@ -1,4 +1,9 @@
-﻿using System;
+﻿//=================================
+// Copyright (c) Coalition of Good-Hearted Engineers
+// Free to use to bring order in your workplace
+//=================================
+
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tarteeb.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class MigrateTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,7 +44,7 @@ namespace Tarteeb.Api.Migrations
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsVerififed = table.Column<bool>(type: "bit", nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
                     GitHubUsername = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TelegramUsername = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TeamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
