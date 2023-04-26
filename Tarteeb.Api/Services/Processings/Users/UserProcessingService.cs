@@ -3,7 +3,9 @@
 // Free to use to bring order in your workplace
 //=================================
 
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Tarteeb.Api.Brokers.Loggings;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Services.Foundations.Users;
@@ -30,5 +32,14 @@ namespace Tarteeb.Api.Services.Processings.Users
             return allUser.FirstOrDefault(retrievedUser => retrievedUser.Email.Equals(email)
                     && retrievedUser.Password.Equals(password));
         });
+
+        public async ValueTask<Guid> VerifyUserByIdAsync(Guid userId)
+        {
+            User maybeUser = await this.userService.RetrieveUserByIdAsync(userId);
+            maybeUser.IsVerififed = true;
+            await this.userService.ModifyUserAsync(maybeUser);
+
+            return maybeUser.Id;
+        }
     }
 }
