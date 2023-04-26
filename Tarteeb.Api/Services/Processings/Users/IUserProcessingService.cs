@@ -13,5 +13,6 @@ namespace Tarteeb.Api.Services.Processings.Users
     {
         User RetrieveUserByCredentails(string email, string password);
         ValueTask<Guid> VerifyUserByIdAsync(Guid userId);
+        ValueTask<Guid> ActivateUserByIdAsync(Guid userId);
     }
 }

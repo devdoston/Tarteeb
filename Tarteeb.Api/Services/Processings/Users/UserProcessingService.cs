@@ -36,7 +36,16 @@ namespace Tarteeb.Api.Services.Processings.Users
         public async ValueTask<Guid> VerifyUserByIdAsync(Guid userId)
         {
             User maybeUser = await this.userService.RetrieveUserByIdAsync(userId);
-            maybeUser.IsVerififed = true;
+            maybeUser.IsVerified = true;
+            await this.userService.ModifyUserAsync(maybeUser);
+
+            return maybeUser.Id;
+        }
+
+        public async ValueTask<Guid> ActivateUserByIdAsync(Guid userId)
+        {
+            User maybeUser = await this.userService.RetrieveUserByIdAsync(userId);
+            maybeUser.IsActive = true;
             await this.userService.ModifyUserAsync(maybeUser);
 
             return maybeUser.Id;
