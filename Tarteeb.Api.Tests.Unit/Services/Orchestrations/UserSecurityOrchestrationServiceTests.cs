@@ -82,6 +82,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             };
         }
 
+        private static string CreateRandomUrl() =>
+            $"{GetRandomString()}/{GetRandomString}";
+
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 

@@ -24,6 +24,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
         {
             // given
             User someUser = CreateRandomUser();
+            string someUrl = GetRandomString();
 
             var expectedUserOrchestrationDependencyException =
                 new UserOrchestrationDependencyException(dependencyException.InnerException as Xeption);
@@ -33,7 +34,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             // when
             ValueTask<User> createUserAccountTask = this.userSecurityOrchestrationService
-                .CreateUserAccountAsync(someUser);
+                .CreateUserAccountAsync(someUser, someUrl);
 
             UserOrchestrationDependencyException actualUserOrchestrationDependencyException =
                 await Assert.ThrowsAsync<UserOrchestrationDependencyException>(createUserAccountTask.AsTask);
@@ -64,6 +65,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
         {
             // given
             User someUser = CreateRandomUser();
+            string someUrl = GetRandomString();
 
             var expectedUserOrchestrationDependencyValidationException =
                 new UserOrchestrationDependencyValidationException(dependencyException.InnerException as Xeption);
@@ -73,7 +75,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             // when
             ValueTask<User> createUserAccountTask = this.userSecurityOrchestrationService
-                .CreateUserAccountAsync(someUser);
+                .CreateUserAccountAsync(someUser, someUrl);
 
             UserOrchestrationDependencyValidationException actualUserOrchestrationDependencyValidationException =
                 await Assert.ThrowsAsync<UserOrchestrationDependencyValidationException>(createUserAccountTask.AsTask);
@@ -102,6 +104,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
         {
             // given
             User someUser = CreateRandomUser();
+            string someUrl = GetRandomString();
+
             var serviceException = new Exception();
 
             var failedUserTokenOrchestrationException = new
@@ -115,7 +119,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             // when
             ValueTask<User> createUserAccountTask = this.userSecurityOrchestrationService
-                .CreateUserAccountAsync(someUser);
+                .CreateUserAccountAsync(someUser, someUrl);
 
             UserOrchestrationServiceException actualUserOrchestrationServiceException =
                 await Assert.ThrowsAsync<UserOrchestrationServiceException>(createUserAccountTask.AsTask);

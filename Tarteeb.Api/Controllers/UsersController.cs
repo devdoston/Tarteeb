@@ -4,171 +4,36 @@
 //=================================
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
-using Tarteeb.Api.Models.Foundations.Users;
-using Tarteeb.Api.Models.Foundations.Users.Exceptions;
-using Tarteeb.Api.Services.Foundations.Users;
+using Tarteeb.Api.Services.Processings.Users;
 
 namespace Tarteeb.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class UsersController : RESTFulController
     {
-        private readonly IUserService userService;
+        private readonly IUserProcessingService userProcessingService;
 
-        public UsersController(IUserService userService) =>
-            this.userService = userService;
-
-        [HttpPost]
-        public async ValueTask<ActionResult<User>> PostUserAsync(User user)
-        {
-            try
-            {
-                return await this.userService.AddUserAsync(user);
-            }
-            catch (UserValidationException userValidationException)
-            {
-                return BadRequest(userValidationException.InnerException);
-            }
-            catch (UserDependencyValidationException userDependencyValidationException)
-                when (userDependencyValidationException.InnerException is AlreadyExistsUserException)
-            {
-                return Conflict(userDependencyValidationException.InnerException);
-            }
-            catch (UserDependencyValidationException userDependencyValidationException)
-            {
-                return BadRequest(userDependencyValidationException.InnerException);
-
-            }
-            catch (UserDependencyException userDependencyException)
-            {
-                return InternalServerError(userDependencyException.InnerException);
-            }
-            catch (UserServiceException userServiceException)
-            {
-                return InternalServerError(userServiceException.InnerException);
-            }
-        }
+        public UsersController(IUserProcessingService userProcessingService) =>
+            this.userProcessingService = userProcessingService;
 
         [HttpGet]
-        public ActionResult<IQueryable<User>> GetAllUsers()
+        public async ValueTask<ActionResult<Guid>> VerifyUserByIdAsync(Guid userId)
         {
-            try
-            {
-                IQueryable<User> allUsers = this.userService.RetrieveAllUsers();
+            Guid verifiedId = await this.userProcessingService.VerifyUserByIdAsync(userId);
 
-                return Ok(allUsers);
-            }
-            catch (UserDependencyException userDependencyException)
-            {
-                return InternalServerError(userDependencyException.InnerException);
-            }
-            catch (UserServiceException userServiceException)
-            {
-                return InternalServerError(userServiceException.InnerException);
-            }
+            return Ok(verifiedId);
         }
 
-        [HttpGet("{userId}")]
-        public async ValueTask<ActionResult<User>> GetUserByIdAsync(Guid userId)
+        [HttpPost]
+        public async ValueTask<ActionResult<Guid>> ActivateUserByIdAsync([FromBody] Guid userId)
         {
-            try
-            {
-                return await this.userService.RetrieveUserByIdAsync(userId);
-            }
-            catch (UserDependencyException userDependencyException)
-            {
-                return InternalServerError(userDependencyException.InnerException);
-            }
-            catch (UserValidationException userValidationException)
-                when (userValidationException.InnerException is InvalidUserException)
-            {
-                return BadRequest(userValidationException.InnerException);
-            }
-            catch (UserValidationException userValidationException)
-                when (userValidationException.InnerException is NotFoundUserException)
-            {
-                return NotFound(userValidationException.InnerException);
-            }
-            catch (UserServiceException userServiceException)
-            {
-                return InternalServerError(userServiceException.InnerException);
-            }
-        }
+            Guid activatedId = await this.userProcessingService.ActivateUserByIdAsync(userId);
 
-        [HttpPut]
-        public async ValueTask<ActionResult<User>> PutUserAsync(User user)
-        {
-            try
-            {
-                User modifiedUser =
-                    await this.userService.ModifyUserAsync(user);
-
-                return Ok(modifiedUser);
-            }
-            catch (UserValidationException userValidationException)
-                when (userValidationException.InnerException is NotFoundUserException)
-            {
-                return NotFound(userValidationException.InnerException);
-            }
-            catch (UserValidationException userValidationException)
-            {
-                return BadRequest(userValidationException.InnerException);
-            }
-            catch (UserDependencyValidationException userDependencyValidationException)
-            {
-                return BadRequest(userDependencyValidationException.InnerException);
-            }
-            catch (UserDependencyException userDependencyException)
-            {
-                return InternalServerError(userDependencyException.InnerException);
-            }
-            catch (UserServiceException userServiceException)
-            {
-                return InternalServerError(userServiceException.InnerException);
-            }
-        }
-
-        [HttpDelete("{userId}")]
-        public async ValueTask<ActionResult<User>> DeleteUserByIdAsync(Guid userId)
-        {
-            try
-            {
-                User deletedUser =
-                    await this.userService.RemoveUserByIdAsync(userId);
-
-                return Ok(deletedUser);
-            }
-            catch (UserValidationException userValidationException)
-                when (userValidationException.InnerException is NotFoundUserException)
-            {
-                return NotFound(userValidationException.InnerException);
-            }
-            catch (UserValidationException userValidationException)
-            {
-                return BadRequest(userValidationException.InnerException);
-            }
-            catch (UserDependencyValidationException userDependencyValidationException)
-                when (userDependencyValidationException.InnerException is LockedUserException)
-            {
-                return Locked(userDependencyValidationException.InnerException);
-            }
-            catch (UserDependencyValidationException userDependencyValidationException)
-            {
-                return BadRequest(userDependencyValidationException.InnerException);
-            }
-            catch (UserDependencyException userDependencyException)
-            {
-                return InternalServerError(userDependencyException.InnerException);
-            }
-            catch (UserServiceException userServiceException)
-            {
-                return InternalServerError(userServiceException.InnerException);
-            }
+            return Ok(activatedId);
         }
     }
 }

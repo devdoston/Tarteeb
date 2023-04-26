@@ -35,11 +35,12 @@ namespace Tarteeb.Api.Services.Orchestrations
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<User> CreateUserAccountAsync(User user) =>
+        public ValueTask<User> CreateUserAccountAsync(User user, string requestUrl) =>
         TryCatch(async () =>
         {
             User persistedUser = await this.userService.AddUserAsync(user);
-            Email email = CreateUserEmail(persistedUser);
+            Email email = CreateUserEmail(persistedUser, requestUrl);
+
             await this.emailService.SendEmailAsync(email);
 
             return persistedUser;
@@ -68,8 +69,10 @@ namespace Tarteeb.Api.Services.Orchestrations
                     && retrievedUser.Password.Equals(password));
         }
 
-        private Email CreateUserEmail(User user)
+        private Email CreateUserEmail(User user, string requestUrl)
         {
+            string endpoint = "api/Users/VerifyUserById";
+            string verificationAddress = $"{requestUrl}/{endpoint}/{user.Id}";
             string subject = "Confirm your email";
             string htmlBody = @$"
 <!DOCTYPE html>
@@ -77,7 +80,7 @@ namespace Tarteeb.Api.Services.Orchestrations
   <body>
     <h1>Hey {user.FirstName}</h1>
     <p>Thank you for registering for our schooling system. Please confirm your email address by clicking the button below.</p>
-    <a href=""https://www.example.com/confirm-email"">
+    <a href=""{verificationAddress}"">
       <button>Confirm Email</button>
     </a>
   </body>

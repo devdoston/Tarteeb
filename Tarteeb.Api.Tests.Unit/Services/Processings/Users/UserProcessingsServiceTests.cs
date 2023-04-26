@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Moq;
+using Tarteeb.Api.Brokers.DateTimes;
 using Tarteeb.Api.Brokers.Loggings;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
@@ -22,16 +23,19 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
     public partial class UserProcessingsServiceTests
     {
         private readonly Mock<IUserService> userServiceMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IUserProcessingService userProcessingsService;
 
         public UserProcessingsServiceTests()
         {
             this.userServiceMock = new Mock<IUserService>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.userProcessingsService = new UserProcessingService(
                 userService: this.userServiceMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 

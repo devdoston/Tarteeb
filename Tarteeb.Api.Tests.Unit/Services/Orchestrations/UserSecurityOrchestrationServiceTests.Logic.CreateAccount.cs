@@ -9,6 +9,7 @@ using Force.DeepCloner;
 using Moq;
 using Tarteeb.Api.Models.Foundations.Emails;
 using Tarteeb.Api.Models.Foundations.Users;
+using Tynamix.ObjectFiller;
 using Xunit;
 
 namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
@@ -19,6 +20,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
         public async Task ShouldCreateUserAccountAsync()
         {
             // given
+            string randomUrl = CreateRandomUrl();
+            string requestUrl = randomUrl;
             User randomUser = CreateRandomUser();
             User inputUser = randomUser;
             User persistedUser = inputUser;
@@ -36,7 +39,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             // when
             User actualUser = await this.userSecurityOrchestrationService
-                .CreateUserAccountAsync(inputUser);
+                .CreateUserAccountAsync(inputUser, requestUrl);
 
             // then
             actualUser.Should().BeEquivalentTo(expectedUser);
