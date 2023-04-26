@@ -20,7 +20,7 @@ namespace Tarteeb.Api.Controllers
         public UsersController(IUserProcessingService userProcessingService) =>
             this.userProcessingService = userProcessingService;
 
-        [HttpGet]
+        [HttpGet("{userId}")]
         public async ValueTask<ActionResult<Guid>> VerifyUserByIdAsync(Guid userId)
         {
             Guid verifiedId = await this.userProcessingService.VerifyUserByIdAsync(userId);
