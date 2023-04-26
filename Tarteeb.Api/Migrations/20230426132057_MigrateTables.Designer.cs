@@ -12,8 +12,8 @@ using Tarteeb.Api.Brokers.Storages;
 namespace Tarteeb.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20230425151806_changeTelegramUsername&GithubUsernameToAcceptNull")]
-    partial class changeTelegramUsernameGithubUsernameToAcceptNull
+    [Migration("20230426132057_MigrateTables")]
+    partial class MigrateTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,6 +133,9 @@ namespace Tarteeb.Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("MilestoneId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
@@ -152,9 +155,7 @@ namespace Tarteeb.Api.Migrations
 
                     b.HasIndex("AssigneeId");
 
-                    b.HasIndex("CreatedUserId");
-
-                    b.HasIndex("UpdatedUserId");
+                    b.HasIndex("MilestoneId");
 
                     b.ToTable("Tickets");
                 });
@@ -211,12 +212,12 @@ namespace Tarteeb.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GitHubUsername")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsVerififed")
+                    b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
@@ -232,7 +233,7 @@ namespace Tarteeb.Api.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TelegramUsername")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
@@ -243,15 +244,7 @@ namespace Tarteeb.Api.Migrations
                         .IsUnique()
                         .HasFilter("[Email] IS NOT NULL");
 
-                    b.HasIndex("GitHubUsername")
-                        .IsUnique()
-                        .HasFilter("[GitHubUsername] NULL");
-
                     b.HasIndex("TeamId");
-
-                    b.HasIndex("TelegramUsername")
-                        .IsUnique()
-                        .HasFilter("[TelegramUsername] NULL");
 
                     b.ToTable("Users");
                 });
@@ -288,27 +281,19 @@ namespace Tarteeb.Api.Migrations
 
             modelBuilder.Entity("Tarteeb.Api.Models.Foundations.Tickets.Ticket", b =>
                 {
-                    b.HasOne("Tarteeb.Api.Models.Foundations.Users.User", "Assignee")
-                        .WithMany()
-                        .HasForeignKey("AssigneeId");
+                    b.HasOne("Tarteeb.Api.Models.Foundations.Users.User", "User")
+                        .WithMany("Tickets")
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Tarteeb.Api.Models.Foundations.Users.User", "CreatedUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Tarteeb.Api.Models.Foundations.Milestones.Milestone", "Milestone")
+                        .WithMany("Tickets")
+                        .HasForeignKey("MilestoneId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Tarteeb.Api.Models.Foundations.Users.User", "UpdatedUser")
-                        .WithMany()
-                        .HasForeignKey("UpdatedUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Milestone");
 
-                    b.Navigation("Assignee");
-
-                    b.Navigation("CreatedUser");
-
-                    b.Navigation("UpdatedUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Tarteeb.Api.Models.Foundations.Times.Time", b =>
@@ -339,6 +324,16 @@ namespace Tarteeb.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("Tarteeb.Api.Models.Foundations.Milestones.Milestone", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Tarteeb.Api.Models.Foundations.Users.User", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }
