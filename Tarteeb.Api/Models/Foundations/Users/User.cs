@@ -23,7 +23,7 @@ namespace Tarteeb.Api.Models.Foundations.Users
         public DateTimeOffset UpdatedDate { get; set; }
         public string Password { get; set; }
         public bool IsActive { get; set; }
-        public bool IsVerififed { get; set; }
+        public bool IsVerified { get; set; }
         public string GitHubUsername { get; set; }
         public string TelegramUsername { get; set; }
 
