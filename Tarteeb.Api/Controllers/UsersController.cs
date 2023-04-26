@@ -20,7 +20,7 @@ namespace Tarteeb.Api.Controllers
         public UsersController(IUserProcessingService userProcessingService) =>
             this.userProcessingService = userProcessingService;
 
-        [HttpGet("{userId}")]
+        [HttpGet]
         public async ValueTask<ActionResult<Guid>> VerifyUserByIdAsync(Guid userId)
         {
             Guid verifiedId = await this.userProcessingService.VerifyUserByIdAsync(userId);
@@ -28,8 +28,8 @@ namespace Tarteeb.Api.Controllers
             return Ok(verifiedId);
         }
 
-        [HttpGet("{userId}")]
-        public async ValueTask<ActionResult<Guid>> ActivateUserByIdAsync(Guid userId)
+        [HttpPost]
+        public async ValueTask<ActionResult<Guid>> ActivateUserByIdAsync([FromBody] Guid userId)
         {
             Guid activatedId = await this.userProcessingService.ActivateUserByIdAsync(userId);
 

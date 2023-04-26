@@ -28,8 +28,11 @@ namespace Tarteeb.Api.Controllers
         {
             try
             {
+
+                string requestUrl = $"{Request.Scheme}://{Request.Host.Value}";
+
                 User createdUserAccount = await this.userSecurityOrchestrationService
-                    .CreateUserAccountAsync(user);
+                    .CreateUserAccountAsync(user, requestUrl);
 
                 return Created(createdUserAccount);
             }
