@@ -33,9 +33,10 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
                 service.AddUserAsync(inputUser))
                     .ReturnsAsync(persistedUser);
 
-            this.emailServiceMock.Setup(service =>
-                service.SendEmailAsync(emailToSend))
-                    .ReturnsAsync(deliveredEmail);
+            //Diyorjon komentga oldi, sababi UserCreate qilayotgan emailga send qilmaydi  ham komentga olingan
+            //this.emailServiceMock.Setup(service =>
+            //    service.SendEmailAsync(emailToSend))
+            //        .ReturnsAsync(deliveredEmail);
 
             // when
             User actualUser = await this.userSecurityOrchestrationService
@@ -47,8 +48,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.userServiceMock.Verify(service =>
                 service.AddUserAsync(inputUser), Times.Once);
 
-            this.emailServiceMock.Verify(service =>
-                service.SendEmailAsync(It.IsAny<Email>()), Times.Once);
+            //Diyorjon komentga oldi, sababi UserCreate qilayotgan emailga send qilmaydi  ham komentga olingan
+            //this.emailServiceMock.Verify(service =>
+            //     service.SendEmailAsync(It.IsAny<Email>()), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.emailServiceMock.VerifyNoOtherCalls();
