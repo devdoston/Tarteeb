@@ -30,6 +30,6 @@ public partial class SecurityService : ISecurityService
         return tokenBroker.GenerateJWT(user);
     });
 
-
-
+    public string HashPassword(string password) =>
+        throw new System.NotImplementedException();
 }

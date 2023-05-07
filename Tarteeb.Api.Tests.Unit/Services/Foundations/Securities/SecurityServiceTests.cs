@@ -13,7 +13,7 @@ using Tarteeb.Api.Services.Foundations.Securities;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace Tarteeb.Api.Tests.Unit.Services.Foundations;
+namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Securities;
 
 public partial class SecurityServiceTests
 {
@@ -42,6 +42,12 @@ public partial class SecurityServiceTests
 
     private static DateTimeOffset GetRandomDateTimeOffset() =>
         new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
+    private static int GetRandomNumber() =>
+        new IntRange(min: 11111, 99999).GetValue();
+
+    private static string CreateRandomPassword() =>
+        "Aa!" + GetRandomNumber();
 
     private static Filler<User> CreateUserFiller(DateTimeOffset dates)
     {
