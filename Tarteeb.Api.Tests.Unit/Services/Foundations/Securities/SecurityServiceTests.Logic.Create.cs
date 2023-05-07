@@ -8,7 +8,7 @@ using Moq;
 using Tarteeb.Api.Models.Foundations.Users;
 using Xunit;
 
-namespace Tarteeb.Api.Tests.Unit.Services.Foundations;
+namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Securities;
 
 public partial class SecurityServiceTests
 {
