@@ -31,5 +31,6 @@ public partial class SecurityService : ISecurityService
     });
 
     public string HashPassword(string password) =>
-        throw new System.NotImplementedException();
+         tokenBroker.HashToken(password);
+    
 }
