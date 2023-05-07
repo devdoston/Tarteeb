@@ -31,6 +31,10 @@ public partial class SecurityService : ISecurityService
     });
 
     public string HashPassword(string password) =>
-         tokenBroker.HashToken(password);
-    
+    TryCatch(() =>
+    {
+        ValidatePassword(password);
+
+        return tokenBroker.HashToken(password);
+    });
 }

@@ -4,6 +4,7 @@
 //=================================
 
 using System;
+using Tarteeb.Api.Models.Foundations.Securities.Exceptions;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Xeptions;
 
@@ -26,6 +27,10 @@ namespace Tarteeb.Api.Services.Foundations.Securities
             catch (InvalidUserException invalidUserException)
             {
                 throw CreateAndLogValidationException(invalidUserException);
+            }
+            catch (InsecurePasswordException insecurePasswordException)
+            {
+                throw CreateAndLogValidationException(insecurePasswordException);
             }
             catch (Exception serviceException)
             {

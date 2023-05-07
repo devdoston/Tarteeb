@@ -22,14 +22,14 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Securities
 
             invalidPasswordException.AddData(
                 key: "ValueComplexity",
-                values: "Value is required");
+                values: "Text is required");
 
             invalidPasswordException.AddData(
                 key: "LengthComplexity",
                 values: "At least 8 characters is required");
 
             invalidPasswordException.AddData(
-                key: "UpperCaseComplexity",
+                key: "UppercaseComplexity",
                 values: "At least one capital letter is required");
 
             invalidPasswordException.AddData(
