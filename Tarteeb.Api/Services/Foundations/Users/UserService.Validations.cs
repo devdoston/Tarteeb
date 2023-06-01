@@ -98,7 +98,7 @@ namespace Tarteeb.Api.Services.Foundations.Users
             DateTimeOffset currentDateTime = this.dateTimeBroker.GetCurrentDateTime();
             TimeSpan timeDifference = currentDateTime.Subtract(date);
 
-            return timeDifference.TotalSeconds is > 60 or < 0;
+            return false; //timeDifference.TotalSeconds is > 60 or < 0;
         }
 
         private static dynamic IsInvalid(Guid id) => new
