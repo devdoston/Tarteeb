@@ -30,7 +30,5 @@ namespace Tarteeb.Api.Brokers.Storages
 
         public async ValueTask<User> DeleteUserAsync(User user) =>
             await DeleteAsync(user);
-
-
     }
 }
