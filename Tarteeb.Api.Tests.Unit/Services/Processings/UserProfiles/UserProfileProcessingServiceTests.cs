@@ -5,6 +5,7 @@
 
 using Moq;
 using System;
+using System.Linq.Expressions;
 using Tarteeb.Api.Brokers.Loggings;
 using Tarteeb.Api.Models.Foundations.Emails;
 using Tarteeb.Api.Models.Foundations.Teams;
@@ -13,6 +14,7 @@ using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Services.Foundations.Users;
 using Tarteeb.Api.Services.Processings.UserProfiles;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
 {
@@ -52,6 +54,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
                 TeamId = user.TeamId
             };
         }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private User CreateRandomUser() =>
             this.CreateUserFiller(GetRandomDateTimeOffset()).Create();
