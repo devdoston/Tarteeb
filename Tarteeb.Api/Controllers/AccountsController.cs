@@ -10,7 +10,7 @@ using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Orchestrations.UserTokens;
 using Tarteeb.Api.Models.Orchestrations.UserTokens.Exceptions;
-using Tarteeb.Api.Services.Orchestrations;
+using Tarteeb.Api.Services.Orchestrations.UserSecurities;
 
 namespace Tarteeb.Api.Controllers
 {
