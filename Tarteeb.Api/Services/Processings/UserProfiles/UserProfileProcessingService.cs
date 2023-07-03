@@ -13,7 +13,7 @@ using Tarteeb.Api.Services.Foundations.Users;
 
 namespace Tarteeb.Api.Services.Processings.UserProfiles
 {
-    public class UserProfileProcessingService : IUserProfileProcessingService
+    public partial class UserProfileProcessingService : IUserProfileProcessingService
     {
         private readonly IUserService userService;
         private readonly ILoggingBroker loggingBroker;
@@ -26,13 +26,15 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<UserProfile> RetrieveUserProfileByIdAsync(Guid userProfileId)
+        public ValueTask<UserProfile> RetrieveUserProfileByIdAsync(Guid userProfileId) =>
+        TryCatch(async () =>
         {
+            ValidateUserProfileId(userProfileId);
             var maybeUser = await this.userService.RetrieveUserByIdAsync(userProfileId);
             UserProfile populatedUserProfile = PopulateUserProfile(maybeUser);
 
             return populatedUserProfile;
-        }
+        });
 
         private UserProfile PopulateUserProfile(User user)
         {
