@@ -6,6 +6,8 @@
 using System;
 using System.Threading.Tasks;
 using Tarteeb.Api.Brokers.Loggings;
+using Tarteeb.Api.Models.Foundations.Emails;
+using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Services.Foundations.Users;
 
@@ -24,9 +26,30 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<UserProfile> RetrieveUserProfileByIdAsync(Guid userProfileId)
+        public async ValueTask<UserProfile> RetrieveUserProfileByIdAsync(Guid userProfileId)
         {
-            throw new NotImplementedException();
+            var maybeUser = await this.userService.RetrieveUserByIdAsync(userProfileId);
+            UserProfile populatedUserProfile = PopulateUserProfile(maybeUser);
+
+            return populatedUserProfile;
+        }
+
+        private UserProfile PopulateUserProfile(User user)
+        {
+            return new UserProfile
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email,
+                BirthDate = user.BirthDate,
+                IsActive = user.IsActive,
+                IsVerified = user.IsVerified,
+                GitHubUsername = user.GitHubUsername,
+                TelegramUsername = user.TelegramUsername,
+                TeamId = user.TeamId
+            };
         }
     }
 }
