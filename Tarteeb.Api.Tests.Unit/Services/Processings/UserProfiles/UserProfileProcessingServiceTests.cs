@@ -10,11 +10,13 @@ using Tarteeb.Api.Brokers.Loggings;
 using Tarteeb.Api.Models.Foundations.Emails;
 using Tarteeb.Api.Models.Foundations.Teams;
 using Tarteeb.Api.Models.Foundations.Users;
+using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Services.Foundations.Users;
 using Tarteeb.Api.Services.Processings.UserProfiles;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
 {
@@ -32,6 +34,16 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             this.userProfileProcessingService = new UserProfileProcessingService(
                 userService: this.userServiceMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
+        }
+
+        public static TheoryData<Xeption> UserDependencyValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+
+            return new TheoryData<Xeption>
+            {
+                new UserValidationException(someInnerException)
+            };
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
