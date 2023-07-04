@@ -41,6 +41,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.userServiceMock.Setup(service =>
                 service.RetrieveAllUsers()).Returns(retrievedUsers);
 
+            this.securityServiceMock.Setup(service => 
+                service.HashPassword(existingUser.Password)).Returns(hashPassword);
+
             this.securityServiceMock.Setup(service =>
                 service.CreateToken(storageUser)).Returns(token);
 
@@ -53,6 +56,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             this.userServiceMock.Verify(service => service.RetrieveAllUsers(),
                 Times.Once);
+
+            this.securityServiceMock.Verify(service => service.HashPassword(
+                existingUser.Password), Times.Once);
 
             this.securityServiceMock.Verify(service => service.CreateToken(
                 storageUser), Times.Once);
