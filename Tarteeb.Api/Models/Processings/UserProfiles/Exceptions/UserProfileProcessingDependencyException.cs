@@ -7,10 +7,10 @@ using Xeptions;
 
 namespace Tarteeb.Api.Models.Processings.UserProfiles.Exceptions
 {
-    public class InvalidUserProfileProcessingException : Xeption
+    public class UserProfileProcessingDependencyException : Xeption
     {
-        public InvalidUserProfileProcessingException()
-            : base(message: "User profile is invalid.")
+        public UserProfileProcessingDependencyException(Xeption innerException)
+            : base(message: "User profile dependency error occurred, contact support.", innerException)
         { }
     }
 }

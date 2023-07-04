@@ -11,8 +11,6 @@ namespace Tarteeb.Api.Models.Processings.UserProfiles.Exceptions
     {
         public UserProfileProcessingValidationException(Xeption innerException)
              : base(message: "User profile validation error occured, fix the errors and try again.")
-        {
-            
-        }
+        { }
     }
 }

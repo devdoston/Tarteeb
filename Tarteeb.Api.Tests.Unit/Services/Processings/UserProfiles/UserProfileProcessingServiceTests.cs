@@ -36,6 +36,17 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
+        public static TheoryData<Xeption> UserDependencyExceptions()
+        {
+            var someInnerException = new Xeption();
+
+            return new TheoryData<Xeption>
+            {
+                new UserDependencyException(someInnerException),
+                new UserServiceException(someInnerException)
+            };
+        }
+
         public static TheoryData<Xeption> UserDependencyValidationExceptions()
         {
             var someInnerException = new Xeption();

@@ -6,6 +6,7 @@
 using System;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
+using Microsoft.OData.ModelBuilder;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Models.Processings.UserProfiles.Exceptions;
@@ -31,6 +32,10 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             {
                 throw CreateAndLogValidationException(notFoundUserException);
             }
+            catch (UserValidationException userValidationException)
+            {
+                throw CreateAndLogDependencyValidationException(userValidationException);
+            }
         }
 
         private UserProfileProcessingValidationException CreateAndLogValidationException(Xeption exception)
@@ -39,6 +44,16 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             this.loggingBroker.LogError(userProfileValidationException);
 
             return userProfileValidationException;
+        }
+       
+        private UserProfileProcessingDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
+        {
+            var userProfileProcessingDependencyValidationException =
+                new UserProfileProcessingDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(userProfileProcessingDependencyValidationException);
+
+            return userProfileProcessingDependencyValidationException;
         }
     }
 }
