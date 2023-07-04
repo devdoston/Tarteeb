@@ -62,7 +62,7 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
         private UserProfileProcessingDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
         {
             var userProfileProcessingDependencyValidationException =
-                new UserProfileProcessingDependencyValidationException(exception);
+                new UserProfileProcessingDependencyValidationException(exception.InnerException as Xeption);
 
             this.loggingBroker.LogError(userProfileProcessingDependencyValidationException);
 
@@ -72,7 +72,7 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
         private UserProfileProcessingDependencyException CreateAndLogDependencyException(Xeption exception)
         {
             var userProfileProcessingDependencyException =
-                new UserProfileProcessingDependencyException(exception);
+                new UserProfileProcessingDependencyException(exception.InnerException as Xeption);
 
             this.loggingBroker.LogError(userProfileProcessingDependencyException);
 

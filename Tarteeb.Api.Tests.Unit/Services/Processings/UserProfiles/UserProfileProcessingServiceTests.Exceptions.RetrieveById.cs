@@ -65,7 +65,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             Guid inputUserProfileGuid = randomUserProfileGuid;
 
             var userProfileProcessingDependencyException =
-                new UserProfileProcessingDependencyException(dependencyException);
+                new UserProfileProcessingDependencyException(dependencyException.InnerException as Xeption);
 
             this.userServiceMock.Setup(service =>
                 service.RetrieveUserByIdAsync(inputUserProfileGuid))
