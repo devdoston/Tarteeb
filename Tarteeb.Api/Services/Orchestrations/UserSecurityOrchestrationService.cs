@@ -65,8 +65,10 @@ namespace Tarteeb.Api.Services.Orchestrations
         {
             IQueryable<User> allUser = this.userService.RetrieveAllUsers();
 
+            string hashedPassword = this.securityService.HashPassword(password);
+
             return allUser.FirstOrDefault(retrievedUser => retrievedUser.Email.Equals(email)
-                    && retrievedUser.Password.Equals(password));
+                    && retrievedUser.Password.Equals(hashedPassword));
         }
 
         private Email CreateUserEmail(User user, string requestUrl)
