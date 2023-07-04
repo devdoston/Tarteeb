@@ -7,6 +7,8 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Tarteeb.Api.Models.Foundations.Users;
+using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Models.Processings.UserProfiles.Exceptions;
 using Xunit;
@@ -46,6 +48,45 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUserDoesNotExistAndLogItAsync()
+        {
+            // given
+            Guid userRandomProfileId = Guid.NewGuid();
+            Guid inputUserProfileId = Guid.NewGuid();
+            User nullUser = null;
+
+            var nullUserException = new NullUserException();
+ 
+            var expectedUserProfileValidationException = 
+                new UserProfileValidationException(nullUserException);
+
+            this.userServiceMock.Setup(service =>
+                service.RemoveUserByIdAsync(inputUserProfileId))
+                    .ReturnsAsync(nullUser);
+
+            // when
+            ValueTask<UserProfile> retrieveUserProfileByIdTask =
+                this.userProfileProcessingService.RetrieveUserProfileByIdAsync(inputUserProfileId);
+
+            UserProfileValidationException actualUserProfileValidationException =
+                await Assert.ThrowsAsync<UserProfileValidationException>(retrieveUserProfileByIdTask.AsTask);
+
+            // then
+            actualUserProfileValidationException.Should().BeEquivalentTo(expectedUserProfileValidationException);
+
+            this.userServiceMock.Verify(service =>
+                service.RetrieveUserByIdAsync(inputUserProfileId), Times.Once);
+
+            this.loggingBrokerMock.Verify(service =>
+                service.LogError(It.Is(SameExceptionAs(
+                    expectedUserProfileValidationException))), Times.Once);
+
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+
         }
     }
 }
