@@ -21,12 +21,18 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             // given
             string randomUrl = CreateRandomUrl();
             string requestUrl = randomUrl;
+            string hashpassword = GetRandomString();
             User randomUser = CreateRandomUser();
+            randomUser.Password = hashpassword;
             User inputUser = randomUser;
             User persistedUser = inputUser;
             User expectedUser = persistedUser.DeepClone();
             Email emailToSend = CreateUserEmail();
             Email deliveredEmail = emailToSend.DeepClone();
+
+            this.securityServiceMock.Setup(service =>
+                service.HashPassword(inputUser.Password))
+                .Returns(hashpassword);
 
             this.userServiceMock.Setup(service =>
                 service.AddUserAsync(inputUser))
@@ -43,12 +49,16 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             // then
             actualUser.Should().BeEquivalentTo(expectedUser);
 
+            this.securityServiceMock.Verify(service => 
+                service.HashPassword(inputUser.Password), Times.Once());
+
             this.userServiceMock.Verify(service =>
                 service.AddUserAsync(inputUser), Times.Once);
 
             this.emailServiceMock.Verify(service =>
                  service.SendEmailAsync(It.IsAny<Email>()), Times.Once);
 
+            this.securityServiceMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
             this.emailServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
