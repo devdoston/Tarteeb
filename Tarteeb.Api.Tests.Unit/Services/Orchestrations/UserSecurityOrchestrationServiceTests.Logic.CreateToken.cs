@@ -5,6 +5,7 @@
 
 using System.Linq;
 using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Orchestrations.UserTokens;
@@ -20,11 +21,14 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             // given
             string randomString = GetRandomString();
             string token = randomString;
+            string hashPassword = GetRandomString();
             User randomUser = CreateRandomUser();
             User existingUser = randomUser;
+            User storageUser = existingUser.DeepClone();
+            storageUser.Password = hashPassword;
 
             IQueryable<User> randomUsers =
-                CreateRandomUsersIncluding(existingUser);
+                CreateRandomUsersIncluding(storageUser);
 
             IQueryable<User> retrievedUsers = randomUsers;
 
@@ -38,7 +42,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
                 service.RetrieveAllUsers()).Returns(retrievedUsers);
 
             this.securityServiceMock.Setup(service =>
-                service.CreateToken(existingUser)).Returns(token);
+                service.CreateToken(storageUser)).Returns(token);
 
             // when
             UserToken actualUserToken = this.userSecurityOrchestrationService
@@ -51,7 +55,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
                 Times.Once);
 
             this.securityServiceMock.Verify(service => service.CreateToken(
-                existingUser), Times.Once);
+                storageUser), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.securityServiceMock.VerifyNoOtherCalls();
