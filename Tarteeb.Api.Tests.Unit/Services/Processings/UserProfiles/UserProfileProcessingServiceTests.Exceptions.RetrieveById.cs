@@ -93,5 +93,47 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccurresAndLogItAsync()
+        {
+            // given
+            Guid randomUserProfileGuid = Guid.NewGuid();
+            Guid inputUserProfileGuid = randomUserProfileGuid;
+
+            var serviceException = new Exception();
+
+            var failedUserProfileProcessingServiceException =
+                new FailedUserProfileProcessingServiceException(serviceException);
+
+            var expectedUserProfileProcessingServiceException =
+                new UserProfileProcessingServiceException(failedUserProfileProcessingServiceException);
+
+            this.userServiceMock.Setup(service =>
+                service.RetrieveUserByIdAsync(inputUserProfileGuid))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<UserProfile> retrieveUserProfileByIdTask =
+                this.userProfileProcessingService.RetrieveUserProfileByIdAsync(inputUserProfileGuid);
+
+            UserProfileProcessingServiceException actualUserProfileProcessingServiceException =
+                await Assert.ThrowsAsync<UserProfileProcessingServiceException>(
+                    retrieveUserProfileByIdTask.AsTask);
+
+            // given
+            actualUserProfileProcessingServiceException.Should()
+                .BeEquivalentTo(expectedUserProfileProcessingServiceException);
+
+            this.userServiceMock.Verify(service =>
+                service.RetrieveUserByIdAsync(inputUserProfileGuid), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedUserProfileProcessingServiceException))), Times.Once);
+
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
