@@ -56,16 +56,16 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             // given
             Guid userRandomProfileId = Guid.NewGuid();
             Guid inputUserProfileId = Guid.NewGuid();
-            User nullUser = null;
+            User noUser = null;
 
-            var nullUserException = new NullUserException();
+            var notFoundUserException = new NotFoundUserException();
  
             var expectedUserProfileValidationException = 
-                new UserProfileValidationException(nullUserException);
+                new UserProfileValidationException(notFoundUserException);
 
             this.userServiceMock.Setup(service =>
                 service.RemoveUserByIdAsync(inputUserProfileId))
-                    .ReturnsAsync(nullUser);
+                    .ReturnsAsync(noUser);
 
             // when
             ValueTask<UserProfile> retrieveUserProfileByIdTask =

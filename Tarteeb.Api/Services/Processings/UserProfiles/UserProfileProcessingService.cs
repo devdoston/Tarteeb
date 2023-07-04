@@ -31,6 +31,7 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
         {
             ValidateUserProfileId(userProfileId);
             var maybeUser = await this.userService.RetrieveUserByIdAsync(userProfileId);
+            ValidateStorageUser(userProfileId, maybeUser);
             UserProfile populatedUserProfile = PopulateUserProfile(maybeUser);
 
             return populatedUserProfile;

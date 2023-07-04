@@ -5,6 +5,8 @@
 
 using System;
 using System.Data;
+using Tarteeb.Api.Models.Foundations.Users;
+using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Models.Processings.UserProfiles.Exceptions;
 
@@ -12,6 +14,14 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
 {
     public partial class UserProfileProcessingService
     {
+        private void ValidateStorageUser(Guid userId, User user)
+        {
+            if(user is null)
+            {
+                throw new NotFoundUserException(userId);
+            }
+        }
+
         private void ValidateUserProfileId(Guid userProfileId) =>
             Validate((Rule: IsInvalid(userProfileId), Parameter: nameof(UserProfile.Id)));
 

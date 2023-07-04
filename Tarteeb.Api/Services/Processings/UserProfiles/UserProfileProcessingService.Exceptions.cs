@@ -4,7 +4,9 @@
 //=================================
 
 using System;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
+using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Models.Processings.UserProfiles.Exceptions;
 using Xeptions;
@@ -24,6 +26,10 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             catch(InvalidUserProfileException invalidUserProfileException)
             {
                 throw CreateAndLogValidationException(invalidUserProfileException);
+            }
+            catch(NotFoundUserException notFoundUserException)
+            {
+                throw CreateAndLogValidationException(notFoundUserException);
             }
         }
 
