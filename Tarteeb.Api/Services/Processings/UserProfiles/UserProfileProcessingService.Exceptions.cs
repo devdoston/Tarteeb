@@ -23,7 +23,7 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             {
                 return await returningFunction();
             }
-            catch(InvalidUserProfileException invalidUserProfileException)
+            catch(InvalidUserProfileProcessingException invalidUserProfileException)
             {
                 throw CreateAndLogValidationException(invalidUserProfileException);
             }
@@ -33,9 +33,9 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             }
         }
 
-        private UserProfileValidationException CreateAndLogValidationException(Xeption exception)
+        private UserProfileProcessingValidationException CreateAndLogValidationException(Xeption exception)
         {
-            var userProfileValidationException = new UserProfileValidationException(exception);
+            var userProfileValidationException = new UserProfileProcessingValidationException(exception);
             this.loggingBroker.LogError(userProfileValidationException);
 
             return userProfileValidationException;

@@ -34,7 +34,7 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
 
         private static void Validate(params(dynamic Rule, string Parameter)[] validations)
         {
-            var invalidUserProfileException = new InvalidUserProfileException();
+            var invalidUserProfileException = new InvalidUserProfileProcessingException();
 
             foreach((dynamic rule, string parameter) in validations)
             {

@@ -22,21 +22,21 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
         {
             // given
             var invalidUserProfileId = Guid.Empty;
-            var invalidUserProfileException = new InvalidUserProfileException();
+            var invalidUserProfileException = new InvalidUserProfileProcessingException();
 
             invalidUserProfileException.AddData(
                 key: nameof(UserProfile.Id),
                 values: "Id is required");
 
             var expectedUserProfileValidationException =
-                new UserProfileValidationException(invalidUserProfileException);
+                new UserProfileProcessingValidationException(invalidUserProfileException);
 
             // when
             ValueTask<UserProfile> retrieveUserProfileByIdTask = 
                 this.userProfileProcessingService.RetrieveUserProfileByIdAsync(invalidUserProfileId);
 
-            UserProfileValidationException actualUserProfileValidationException =
-                await Assert.ThrowsAsync<UserProfileValidationException>(
+            UserProfileProcessingValidationException actualUserProfileValidationException =
+                await Assert.ThrowsAsync<UserProfileProcessingValidationException>(
                     retrieveUserProfileByIdTask.AsTask);
 
             // then
@@ -61,7 +61,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             var notFoundUserException = new NotFoundUserException();
  
             var expectedUserProfileValidationException = 
-                new UserProfileValidationException(notFoundUserException);
+                new UserProfileProcessingValidationException(notFoundUserException);
 
             this.userServiceMock.Setup(service =>
                 service.RemoveUserByIdAsync(inputUserProfileId))
@@ -71,8 +71,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             ValueTask<UserProfile> retrieveUserProfileByIdTask =
                 this.userProfileProcessingService.RetrieveUserProfileByIdAsync(inputUserProfileId);
 
-            UserProfileValidationException actualUserProfileValidationException =
-                await Assert.ThrowsAsync<UserProfileValidationException>(retrieveUserProfileByIdTask.AsTask);
+            UserProfileProcessingValidationException actualUserProfileValidationException =
+                await Assert.ThrowsAsync<UserProfileProcessingValidationException>(retrieveUserProfileByIdTask.AsTask);
 
             // then
             actualUserProfileValidationException.Should().BeEquivalentTo(expectedUserProfileValidationException);

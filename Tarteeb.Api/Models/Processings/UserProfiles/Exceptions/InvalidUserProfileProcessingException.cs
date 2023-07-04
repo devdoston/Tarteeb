@@ -7,9 +7,9 @@ using Xeptions;
 
 namespace Tarteeb.Api.Models.Processings.UserProfiles.Exceptions
 {
-    public class InvalidUserProfileException : Xeption
+    public class InvalidUserProfileProcessingException : Xeption
     {
-        public InvalidUserProfileException()
+        public InvalidUserProfileProcessingException()
             : base(message: "User profile is invalid.")
         {
             
