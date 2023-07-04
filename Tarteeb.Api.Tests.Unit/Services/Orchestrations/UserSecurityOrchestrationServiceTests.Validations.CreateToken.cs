@@ -65,6 +65,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
         public void ShouldThrowValidationExceptionOnCreateIfUserDoesntExistsAndLogItAsync()
         {
             //given
+            string email = GetRandomString();
             string password = GetRandomString();
             string hashedPassword = GetRandomString();
             IQueryable<User> randomUsers = CreateRandomUsers();
@@ -82,7 +83,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             //when
             Action createUserTokenAction = () =>
-                this.userSecurityOrchestrationService.CreateUserToken(email: password, password: password);
+                this.userSecurityOrchestrationService.CreateUserToken(email, password);
 
             UserTokenOrchestrationValidationException actualUserTokenOrchestrationValidationException =
                  Assert.Throws<UserTokenOrchestrationValidationException>(createUserTokenAction);
