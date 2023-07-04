@@ -25,8 +25,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             Guid randomUserProfileGuid = Guid.NewGuid();
             Guid inputUserProfileGuid = randomUserProfileGuid;
 
-            var expectedUserProfileValidationException =
-                new UserProfileProcessingDependencyValidationException(dependencyValidationException);
+            var expectedUserProfileProcessingValidationException =
+                new UserProfileProcessingDependencyValidationException(dependencyValidationException.InnerException as Xeption);
 
             this.userServiceMock.Setup(service =>
                 service.RetrieveUserByIdAsync(inputUserProfileGuid))
@@ -42,14 +42,14 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
 
             // then
             actualUserProfileProcessingDependencyValidationException.Should()
-                .BeEquivalentTo(expectedUserProfileValidationException);
+                .BeEquivalentTo(expectedUserProfileProcessingValidationException);
 
             this.userServiceMock.Verify(service =>
                 service.RetrieveUserByIdAsync(inputUserProfileGuid), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedUserProfileValidationException))),Times.Once);
+                    expectedUserProfileProcessingValidationException))),Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

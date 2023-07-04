@@ -22,29 +22,29 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
         {
             // given
             var invalidUserProfileId = Guid.Empty;
-            var invalidUserProfileException = new InvalidUserProfileProcessingException();
+            var invalidUserProfileProcessingException = new InvalidUserProfileProcessingException();
 
-            invalidUserProfileException.AddData(
+            invalidUserProfileProcessingException.AddData(
                 key: nameof(UserProfile.Id),
                 values: "Id is required");
 
-            var expectedUserProfileValidationException =
-                new UserProfileProcessingValidationException(invalidUserProfileException);
+            var expectedUserProfileProcessingValidationException =
+                new UserProfileProcessingValidationException(invalidUserProfileProcessingException);
 
             // when
             ValueTask<UserProfile> retrieveUserProfileByIdTask = 
                 this.userProfileProcessingService.RetrieveUserProfileByIdAsync(invalidUserProfileId);
 
-            UserProfileProcessingValidationException actualUserProfileValidationException =
+            UserProfileProcessingValidationException actualUserProfileProcesingValidationException =
                 await Assert.ThrowsAsync<UserProfileProcessingValidationException>(
                     retrieveUserProfileByIdTask.AsTask);
 
             // then
-            actualUserProfileValidationException.Should().BeEquivalentTo(expectedUserProfileValidationException);
+            actualUserProfileProcesingValidationException.Should().BeEquivalentTo(expectedUserProfileProcessingValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedUserProfileValidationException))), Times.Once);
+                    expectedUserProfileProcessingValidationException))), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -60,7 +60,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
 
             var notFoundUserException = new NotFoundUserException();
  
-            var expectedUserProfileValidationException = 
+            var expectedUserProfileProcessingValidationException = 
                 new UserProfileProcessingValidationException(notFoundUserException);
 
             this.userServiceMock.Setup(service =>
@@ -71,18 +71,18 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             ValueTask<UserProfile> retrieveUserProfileByIdTask =
                 this.userProfileProcessingService.RetrieveUserProfileByIdAsync(inputUserProfileId);
 
-            UserProfileProcessingValidationException actualUserProfileValidationException =
+            UserProfileProcessingValidationException actualUserProfileProcessingValidationException =
                 await Assert.ThrowsAsync<UserProfileProcessingValidationException>(retrieveUserProfileByIdTask.AsTask);
 
             // then
-            actualUserProfileValidationException.Should().BeEquivalentTo(expectedUserProfileValidationException);
+            actualUserProfileProcessingValidationException.Should().BeEquivalentTo(expectedUserProfileProcessingValidationException);
 
             this.userServiceMock.Verify(service =>
                 service.RetrieveUserByIdAsync(inputUserProfileId), Times.Once);
 
             this.loggingBrokerMock.Verify(service =>
                 service.LogError(It.Is(SameExceptionAs(
-                    expectedUserProfileValidationException))), Times.Once);
+                    expectedUserProfileProcessingValidationException))), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
