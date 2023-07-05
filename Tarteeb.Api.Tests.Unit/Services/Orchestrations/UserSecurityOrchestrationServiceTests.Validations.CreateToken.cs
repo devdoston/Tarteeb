@@ -5,10 +5,13 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
+using Tarteeb.Api.Models.Orchestrations.UserTokens;
 using Tarteeb.Api.Models.Orchestrations.UserTokens.Exceptions;
 using Xunit;
 
@@ -100,6 +103,50 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
             this.securityServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnCreateIfUserIsNotActiveOrVerifiedAndLogItAsync()
+        {
+            // given
+            User randomUser = CreateRandomUser();
+            User existingUser = randomUser;
+            IQueryable<User> storageUsers = CreateRandomUsersIncluding(existingUser);
+
+            var invalidUserCredentialOrchestrationException =
+                new InvalidUserCredentialOrchestrationException();
+            
+            invalidUserCredentialOrchestrationException.AddData(
+                key: nameof(User.IsActive),
+                values: "Status is not true");
+
+            invalidUserCredentialOrchestrationException.AddData(
+                key: nameof(User.IsVerified),
+                values: "Status is not true");
+
+            var expectedUserTokenOrchestrationValidationException = 
+                new UserTokenOrchestrationValidationException(invalidUserCredentialOrchestrationException);
+
+            this.userServiceMock.Setup(broker =>
+                broker.RetrieveAllUsers()).Returns(storageUsers);
+
+            // when
+            Action createUserTokenTask = () =>
+                this.userSecurityOrchestrationService.CreateUserToken(existingUser.Email, existingUser.Password);
+
+            UserTokenOrchestrationValidationException actualUserTokenValidationException =
+                Assert.Throws<UserTokenOrchestrationValidationException>(createUserTokenTask);
+            
+            // then
+            actualUserTokenValidationException.Should().BeEquivalentTo(
+                expectedUserTokenOrchestrationValidationException);
+
+            this.userServiceMock.Verify(broker => broker.RetrieveAllUsers(), Times.Once);
+            this.loggingBrokerMock.Verify(broker => broker.LogError(It.Is(SameExceptionAs(
+                invalidUserCredentialOrchestrationException))), Times.Once);
+
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
