@@ -39,13 +39,16 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             };
 
             this.userServiceMock.Setup(service =>
-                service.RetrieveAllUsers()).Returns(retrievedUsers);
-
-            this.securityServiceMock.Setup(service => 
-                service.HashPassword(existingUser.Password)).Returns(hashPassword);
+                service.RetrieveAllUsers())
+                    .Returns(retrievedUsers);
 
             this.securityServiceMock.Setup(service =>
-                service.CreateToken(storageUser)).Returns(token);
+                service.HashPassword(existingUser.Password))
+                    .Returns(hashPassword);
+
+            this.securityServiceMock.Setup(service =>
+                service.CreateToken(storageUser))
+                    .Returns(token);
 
             // when
             UserToken actualUserToken = this.userSecurityOrchestrationService
@@ -54,14 +57,14 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             // then
             actualUserToken.Should().BeEquivalentTo(expectedUserToken);
 
-            this.userServiceMock.Verify(service => service.RetrieveAllUsers(),
-                Times.Once);
+            this.userServiceMock.Verify(service =>
+                service.RetrieveAllUsers(), Times.Once);
 
-            this.securityServiceMock.Verify(service => service.HashPassword(
-                existingUser.Password), Times.Once);
+            this.securityServiceMock.Verify(service =>
+                service.HashPassword(existingUser.Password), Times.Once);
 
-            this.securityServiceMock.Verify(service => service.CreateToken(
-                storageUser), Times.Once);
+            this.securityServiceMock.Verify(service =>
+                service.CreateToken(storageUser), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.securityServiceMock.VerifyNoOtherCalls();

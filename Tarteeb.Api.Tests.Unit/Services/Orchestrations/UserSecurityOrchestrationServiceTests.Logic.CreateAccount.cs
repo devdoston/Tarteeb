@@ -32,7 +32,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             this.securityServiceMock.Setup(service =>
                 service.HashPassword(inputUser.Password))
-                .Returns(hashpassword);
+                    .Returns(hashpassword);
 
             this.userServiceMock.Setup(service =>
                 service.AddUserAsync(inputUser))
@@ -50,7 +50,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             actualUser.Should().BeEquivalentTo(expectedUser);
 
             this.securityServiceMock.Verify(service => 
-                service.HashPassword(inputUser.Password), Times.Once());
+                service.HashPassword(inputUser.Password), Times.Once);
 
             this.userServiceMock.Verify(service =>
                 service.AddUserAsync(inputUser), Times.Once);

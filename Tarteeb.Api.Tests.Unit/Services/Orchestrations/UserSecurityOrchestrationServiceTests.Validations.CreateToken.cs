@@ -75,11 +75,13 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             var expectedUserOrchestrationValidationException =
                 new UserTokenOrchestrationValidationException(notFoundUserException);
 
-            this.userServiceMock.Setup(service => service.RetrieveAllUsers())
-                .Returns(retrievedUsers);
+            this.userServiceMock.Setup(service => 
+                service.RetrieveAllUsers())
+                    .Returns(retrievedUsers);
 
             this.securityServiceMock.Setup(service =>
-                   service.HashPassword(password)).Returns(hashedPassword);
+                service.HashPassword(password))
+                    .Returns(hashedPassword);
 
             //when
             Action createUserTokenAction = () =>
@@ -99,8 +101,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.userServiceMock.Verify(service =>
                 service.RetrieveAllUsers(), Times.Once);
 
-            this.securityServiceMock.Verify(service => service.HashPassword(
-                password), Times.Once);
+            this.securityServiceMock.Verify(service => 
+                service.HashPassword(password), Times.Once);
 
             this.securityServiceMock.Verify(service =>
                 service.CreateToken(It.IsAny<User>()), Times.Never);
