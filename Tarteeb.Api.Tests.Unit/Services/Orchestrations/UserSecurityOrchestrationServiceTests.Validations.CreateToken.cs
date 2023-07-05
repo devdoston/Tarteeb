@@ -106,7 +106,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnCreateIfUserIsNotActiveOrVerifiedAndLogItAsync()
+        public void ShouldThrowValidationExceptionOnCreateIfUserIsNotActiveOrVerifiedAndLogItAsync()
         {
             // given
             User randomUser = CreateRandomUser();
@@ -146,7 +146,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.userServiceMock.Verify(broker => broker.RetrieveAllUsers(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(expectedUserTokenOrchestrationValidationException))), Times.Once);
+                broker.LogError(It.Is(SameExceptionAs(expectedUserTokenOrchestrationValidationException))), 
+                    Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
