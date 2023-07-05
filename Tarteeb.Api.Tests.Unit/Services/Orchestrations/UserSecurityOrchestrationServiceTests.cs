@@ -17,6 +17,7 @@ using Tarteeb.Api.Services.Foundations.Emails;
 using Tarteeb.Api.Services.Foundations.Securities;
 using Tarteeb.Api.Services.Foundations.Users;
 using Tarteeb.Api.Services.Orchestrations;
+using Tarteeb.Api.Services.Orchestrations.UserSecurities;
 using Tynamix.ObjectFiller;
 using Xeptions;
 using Xunit;
