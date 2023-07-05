@@ -3,6 +3,7 @@
 // Free to use to bring order in your workplace
 //=================================
 
+using System.Data;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Orchestrations.UserTokens.Exceptions;
@@ -25,6 +26,19 @@ namespace Tarteeb.Api.Services.Orchestrations
                 throw new NotFoundUserException();
             }
         }
+
+        private void ValidateUserStatus(User user)
+        {
+            Validate(
+                (Rule: IsInvalidStatus(user.IsVerified), Parameter: nameof(User.IsVerified)),
+                (Rule: IsInvalidStatus(user.IsActive), Parameter: nameof(User.IsActive)));
+        }
+
+        private static dynamic IsInvalidStatus(bool value) => new
+        {
+            Condition = value is false,
+            Message = "Status is not true"
+        };
 
         private static dynamic IsInvalid(string text) => new
         {

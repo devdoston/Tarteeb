@@ -111,11 +111,13 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             // given
             User randomUser = CreateRandomUser();
             User existingUser = randomUser;
+            existingUser.IsVerified = false;
+            existingUser.IsActive = false;
             IQueryable<User> storageUsers = CreateRandomUsersIncluding(existingUser);
 
             var invalidUserCredentialOrchestrationException =
                 new InvalidUserCredentialOrchestrationException();
-            
+
             invalidUserCredentialOrchestrationException.AddData(
                 key: nameof(User.IsActive),
                 values: "Status is not true");
@@ -124,7 +126,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
                 key: nameof(User.IsVerified),
                 values: "Status is not true");
 
-            var expectedUserTokenOrchestrationValidationException = 
+            var expectedUserTokenOrchestrationValidationException =
                 new UserTokenOrchestrationValidationException(invalidUserCredentialOrchestrationException);
 
             this.userServiceMock.Setup(broker =>
@@ -136,14 +138,15 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             UserTokenOrchestrationValidationException actualUserTokenValidationException =
                 Assert.Throws<UserTokenOrchestrationValidationException>(createUserTokenTask);
-            
+
             // then
             actualUserTokenValidationException.Should().BeEquivalentTo(
                 expectedUserTokenOrchestrationValidationException);
 
             this.userServiceMock.Verify(broker => broker.RetrieveAllUsers(), Times.Once);
-            this.loggingBrokerMock.Verify(broker => broker.LogError(It.Is(SameExceptionAs(
-                invalidUserCredentialOrchestrationException))), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedUserTokenOrchestrationValidationException))), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

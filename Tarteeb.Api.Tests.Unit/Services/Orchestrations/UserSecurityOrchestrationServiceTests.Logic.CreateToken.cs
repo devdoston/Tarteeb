@@ -22,6 +22,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             string token = randomString;
             User randomUser = CreateRandomUser();
             User existingUser = randomUser;
+            existingUser.IsVerified = true;
+            existingUser.IsActive = true;
 
             IQueryable<User> randomUsers =
                 CreateRandomUsersIncluding(existingUser);
