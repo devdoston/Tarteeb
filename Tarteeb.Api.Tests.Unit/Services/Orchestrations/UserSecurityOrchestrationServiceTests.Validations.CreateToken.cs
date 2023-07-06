@@ -78,7 +78,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             var expectedUserOrchestrationValidationException =
                 new UserTokenOrchestrationValidationException(notFoundUserException);
 
-            this.userServiceMock.Setup(service => 
+            this.userServiceMock.Setup(service =>
                 service.RetrieveAllUsers())
                     .Returns(retrievedUsers);
 
@@ -104,7 +104,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.userServiceMock.Verify(service =>
                 service.RetrieveAllUsers(), Times.Once);
 
-            this.securityServiceMock.Verify(service => 
+            this.securityServiceMock.Verify(service =>
                 service.HashPassword(password), Times.Once);
 
             this.securityServiceMock.Verify(service =>
@@ -119,11 +119,14 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
         public void ShouldThrowValidationExceptionOnCreateIfUserIsNotActiveOrVerifiedAndLogItAsync()
         {
             // given
+            string hashedPassword = GetRandomString();
             User randomUser = CreateRandomUser();
             User existingUser = randomUser;
             existingUser.IsVerified = false;
             existingUser.IsActive = false;
-            IQueryable<User> storageUsers = CreateRandomUsersIncluding(existingUser);
+            var storageUser = existingUser.DeepClone();
+            storageUser.Password = hashedPassword;
+            IQueryable<User> storageUsers = CreateRandomUsersIncluding(storageUser);
 
             var invalidUserCredentialOrchestrationException =
                 new InvalidUserCredentialOrchestrationException();
@@ -142,6 +145,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.userServiceMock.Setup(broker =>
                 broker.RetrieveAllUsers()).Returns(storageUsers);
 
+            this.securityServiceMock.Setup(broker =>
+                broker.HashPassword(existingUser.Password)).Returns(hashedPassword);
+
             // when
             Action createUserTokenTask = () =>
                 this.userSecurityOrchestrationService.CreateUserToken(existingUser.Email, existingUser.Password);
@@ -155,8 +161,11 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             this.userServiceMock.Verify(broker => broker.RetrieveAllUsers(), Times.Once);
 
+            this.userServiceMock.Verify(broker =>
+                broker.RetrieveAllUsers(), Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(expectedUserTokenOrchestrationValidationException))), 
+                broker.LogError(It.Is(SameExceptionAs(expectedUserTokenOrchestrationValidationException))),
                     Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
