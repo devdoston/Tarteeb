@@ -28,6 +28,7 @@ using Tarteeb.Api.Services.Foundations.Times;
 using Tarteeb.Api.Services.Foundations.Users;
 using Tarteeb.Api.Services.Orchestrations;
 using Tarteeb.Api.Services.Orchestrations.UserSecurities;
+using Tarteeb.Api.Services.Processings.UserProfiles;
 using Tarteeb.Api.Services.Processings.Users;
 
 namespace Tarteeb.Api
@@ -135,8 +136,11 @@ namespace Tarteeb.Api
             services.AddTransient<IMilestoneService, MilestoneService>();
         }
 
-        private static void AddProcessingServices(IServiceCollection services) =>
+        private static void AddProcessingServices(IServiceCollection services)
+        {
             services.AddTransient<IUserProcessingService, UserProcessingService>();
+            services.AddTransient<IUserProfileProcessingService, UserProfileProcessingService>();
+        }
 
         private static void AddOrchestrationServices(IServiceCollection services) =>
             services.AddTransient<IUserSecurityOrchestrationService, UserSecurityOrchestrationService>();
