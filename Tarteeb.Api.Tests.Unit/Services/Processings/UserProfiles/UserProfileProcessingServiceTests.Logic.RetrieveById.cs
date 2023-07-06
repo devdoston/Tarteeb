@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
+using Tarteeb.Api.Models.Foundations.Emails;
+using Tarteeb.Api.Models.Foundations.Teams;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Xunit;
@@ -22,14 +24,44 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             // given
             Guid randomUserProfileId = Guid.NewGuid();
             Guid inputUserProfileId = randomUserProfileId;
-            User randomUser = CreateRandomUser();
-            User storedUser = randomUser;
-            UserProfile mappedUserProfile = PopulateUserProfile(storedUser);
-            UserProfile expectedUserProfile = mappedUserProfile.DeepClone();
+            dynamic randomUserProfileProperties = CreateRandomUserProfileProperties();
+
+            var randomUser = new User
+            {
+                Id = randomUserProfileProperties.Id,
+                FirstName = randomUserProfileProperties.FirstName,
+                LastName = randomUserProfileProperties.LastName,
+                PhoneNumber = randomUserProfileProperties.PhoneNumber,
+                Email = randomUserProfileProperties.Email,
+                BirthDate = randomUserProfileProperties.BirthDate,
+                IsActive = randomUserProfileProperties.IsActive,
+                IsVerified = randomUserProfileProperties.IsVerified,
+                GitHubUsername = randomUserProfileProperties.GitHubUsername,
+                TelegramUsername = randomUserProfileProperties.TelegramUsername,
+                TeamId = randomUserProfileProperties.TeamId
+            };
+
+            var randomUserProfile = new UserProfile
+            {
+                Id = randomUserProfileProperties.Id,
+                FirstName = randomUserProfileProperties.FirstName,
+                LastName = randomUserProfileProperties.LastName,
+                PhoneNumber = randomUserProfileProperties.PhoneNumber,
+                Email = randomUserProfileProperties.Email,
+                BirthDate = randomUserProfileProperties.BirthDate,
+                IsActive = randomUserProfileProperties.IsActive,
+                IsVerified = randomUserProfileProperties.IsVerified,
+                GitHubUsername = randomUserProfileProperties.GitHubUsername,
+                TelegramUsername = randomUserProfileProperties.TelegramUsername,
+                TeamId = randomUserProfileProperties.TeamId
+            };
+
+            User returnedUser = randomUser;
+            UserProfile expectedUserProfile = randomUserProfile.DeepClone();
 
             this.userServiceMock.Setup(service =>
                 service.RetrieveUserByIdAsync(inputUserProfileId))
-                    .ReturnsAsync(storedUser);
+                    .ReturnsAsync(returnedUser);
 
             // when
             UserProfile actualUserProfile = 

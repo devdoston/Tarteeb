@@ -57,26 +57,32 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             };
         }
 
+        private static dynamic CreateRandomUserProfileProperties()
+        {
+            return new
+            {
+                Id = Guid.NewGuid(),
+                FirstName = GetRandomString(),
+                LastName = GetRandomString(),
+                PhoneNumber = GetRandomString(),
+                Email = GetRandomString(),
+                BirthDate = GetRandomDateTimeOffset(),
+                IsActive = GetRandomBool(),
+                IsVerified = GetRandomBool(),
+                GitHubUsername = GetRandomString(),
+                TelegramUsername = GetRandomString(),
+                TeamId = Guid.NewGuid()
+            };
+        }
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
-        private static UserProfile PopulateUserProfile(User user)
-        {
-            return new UserProfile
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                Email = user.Email,
-                BirthDate = user.BirthDate,
-                IsActive = user.IsActive,
-                IsVerified = user.IsVerified,
-                GitHubUsername = user.GitHubUsername,
-                TelegramUsername = user.TelegramUsername,
-                TeamId = user.TeamId
-            };
-        }
+        private static bool GetRandomBool() =>
+            new Random().NextDouble() is >= 0.5;
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
