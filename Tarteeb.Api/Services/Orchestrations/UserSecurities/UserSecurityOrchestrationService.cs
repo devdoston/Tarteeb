@@ -52,8 +52,8 @@ namespace Tarteeb.Api.Services.Orchestrations
             ValidateEmailAndPassword(email, password);
             User maybeUser = RetrieveUserByEmailAndPassword(email, password);
             ValidateUserExists(maybeUser);
-            ValidateUserStatus(maybeUser);
-
+            ValidateStorageUser(maybeUser);
+                
             string token = this.securityService.CreateToken(maybeUser);
 
             return new UserToken

@@ -27,8 +27,10 @@ namespace Tarteeb.Api.Services.Orchestrations
             }
         }
 
-        private void ValidateUserStatus(User user)
+        private void ValidateStorageUser(User user)
         {
+            ValidateUserExists(user);
+            
             Validate(
                 (Rule: IsInvalidStatus(user.IsVerified), Parameter: nameof(User.IsVerified)),
                 (Rule: IsInvalidStatus(user.IsActive), Parameter: nameof(User.IsActive)));
