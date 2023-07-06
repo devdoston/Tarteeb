@@ -256,5 +256,46 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Users
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfEmailIsNotValidAndLogItAsync()
+        {
+            //given
+            User randomUser = CreateRandomUser();
+            User invalidUser = randomUser;
+
+            var invalidUserException = new InvalidUserException();
+
+            invalidUserException.AddData(
+                key: nameof(User.Email),
+                values: "Email is not valid");
+
+            var expectedUserValidationException =
+                new UserValidationException(invalidUserException);
+
+            //when
+            ValueTask<User> addUserTask = this.userService.AddUserAsync(invalidUser);
+
+            UserValidationException actualUserValidationException =
+                await Assert.ThrowsAsync<UserValidationException>(addUserTask.AsTask);
+
+            //then
+
+            actualUserValidationException.Should().BeEquivalentTo(expectedUserValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+               broker.GetCurrentDateTime(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                    expectedUserValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertUserAsync(It.IsAny<User>()), Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
