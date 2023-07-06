@@ -24,6 +24,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             string hashPassword = GetRandomString();
             User randomUser = CreateRandomUser();
             User existingUser = randomUser;
+            existingUser.IsVerified = true;
+            existingUser.IsActive = true;
             User storageUser = existingUser.DeepClone();
             storageUser.Password = hashPassword;
 

@@ -5,10 +5,13 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
+using Tarteeb.Api.Models.Orchestrations.UserTokens;
 using Tarteeb.Api.Models.Orchestrations.UserTokens.Exceptions;
 using Xunit;
 
@@ -75,7 +78,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             var expectedUserOrchestrationValidationException =
                 new UserTokenOrchestrationValidationException(notFoundUserException);
 
-            this.userServiceMock.Setup(service => 
+            this.userServiceMock.Setup(service =>
                 service.RetrieveAllUsers())
                     .Returns(retrievedUsers);
 
@@ -101,7 +104,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.userServiceMock.Verify(service =>
                 service.RetrieveAllUsers(), Times.Once);
 
-            this.securityServiceMock.Verify(service => 
+            this.securityServiceMock.Verify(service =>
                 service.HashPassword(password), Times.Once);
 
             this.securityServiceMock.Verify(service =>
@@ -110,6 +113,63 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
             this.securityServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldThrowValidationExceptionOnCreateIfUserIsNotActiveOrVerifiedAndLogItAsync()
+        {
+            // given
+            string hashedPassword = GetRandomString();
+            User randomUser = CreateRandomUser();
+            User existingUser = randomUser;
+            existingUser.IsVerified = false;
+            existingUser.IsActive = false;
+            var storageUser = existingUser.DeepClone();
+            storageUser.Password = hashedPassword;
+            IQueryable<User> storageUsers = CreateRandomUsersIncluding(storageUser);
+
+            var invalidUserCredentialOrchestrationException =
+                new InvalidUserCredentialOrchestrationException();
+
+            invalidUserCredentialOrchestrationException.AddData(
+                key: nameof(User.IsActive),
+                values: "Status is not true");
+
+            invalidUserCredentialOrchestrationException.AddData(
+                key: nameof(User.IsVerified),
+                values: "Status is not true");
+
+            var expectedUserTokenOrchestrationValidationException =
+                new UserTokenOrchestrationValidationException(invalidUserCredentialOrchestrationException);
+
+            this.userServiceMock.Setup(broker =>
+                broker.RetrieveAllUsers()).Returns(storageUsers);
+
+            this.securityServiceMock.Setup(broker =>
+                broker.HashPassword(existingUser.Password)).Returns(hashedPassword);
+
+            // when
+            Action createUserTokenTask = () =>
+                this.userSecurityOrchestrationService.CreateUserToken(existingUser.Email, existingUser.Password);
+
+            UserTokenOrchestrationValidationException actualUserTokenValidationException =
+                Assert.Throws<UserTokenOrchestrationValidationException>(createUserTokenTask);
+
+            // then
+            actualUserTokenValidationException.Should().BeEquivalentTo(
+                expectedUserTokenOrchestrationValidationException);
+
+            this.userServiceMock.Verify(broker => broker.RetrieveAllUsers(), Times.Once);
+
+            this.userServiceMock.Verify(broker =>
+                broker.RetrieveAllUsers(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedUserTokenOrchestrationValidationException))),
+                    Times.Once);
+
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
