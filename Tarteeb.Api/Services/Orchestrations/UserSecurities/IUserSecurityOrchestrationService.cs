@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Orchestrations.UserTokens;
 
-namespace Tarteeb.Api.Services.Orchestrations
+namespace Tarteeb.Api.Services.Orchestrations.UserSecurities
 {
     public interface IUserSecurityOrchestrationService
     {

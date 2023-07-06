@@ -65,7 +65,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
         public void ShouldThrowValidationExceptionOnCreateIfUserDoesntExistsAndLogItAsync()
         {
             //given
-            string someString = GetRandomString();
+            string email = GetRandomString();
+            string password = GetRandomString();
+            string hashedPassword = GetRandomString();
             IQueryable<User> randomUsers = CreateRandomUsers();
             IQueryable<User> retrievedUsers = randomUsers;
             var notFoundUserException = new NotFoundUserException();
@@ -73,12 +75,17 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
             var expectedUserOrchestrationValidationException =
                 new UserTokenOrchestrationValidationException(notFoundUserException);
 
-            this.userServiceMock.Setup(service => service.RetrieveAllUsers())
-                .Returns(retrievedUsers);
+            this.userServiceMock.Setup(service => 
+                service.RetrieveAllUsers())
+                    .Returns(retrievedUsers);
+
+            this.securityServiceMock.Setup(service =>
+                service.HashPassword(password))
+                    .Returns(hashedPassword);
 
             //when
             Action createUserTokenAction = () =>
-                this.userSecurityOrchestrationService.CreateUserToken(email: someString, password: someString);
+                this.userSecurityOrchestrationService.CreateUserToken(email, password);
 
             UserTokenOrchestrationValidationException actualUserTokenOrchestrationValidationException =
                  Assert.Throws<UserTokenOrchestrationValidationException>(createUserTokenAction);
@@ -93,6 +100,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Orchestrations
 
             this.userServiceMock.Verify(service =>
                 service.RetrieveAllUsers(), Times.Once);
+
+            this.securityServiceMock.Verify(service => 
+                service.HashPassword(password), Times.Once);
 
             this.securityServiceMock.Verify(service =>
                 service.CreateToken(It.IsAny<User>()), Times.Never);
