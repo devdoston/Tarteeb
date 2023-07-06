@@ -39,6 +39,7 @@ namespace Tarteeb.Api.Services.Orchestrations
         public ValueTask<User> CreateUserAccountAsync(User user, string requestUrl) =>
         TryCatch(async () =>
         {
+            user.Password = this.securityService.HashPassword(user.Password);
             User persistedUser = await this.userService.AddUserAsync(user);
             Email email = CreateUserEmail(persistedUser, requestUrl);
             await this.emailService.SendEmailAsync(email);
@@ -65,8 +66,10 @@ namespace Tarteeb.Api.Services.Orchestrations
         {
             IQueryable<User> allUser = this.userService.RetrieveAllUsers();
 
+            string hashedPassword = this.securityService.HashPassword(password);
+
             return allUser.FirstOrDefault(retrievedUser => retrievedUser.Email.Equals(email)
-                    && retrievedUser.Password.Equals(password));
+                    && retrievedUser.Password.Equals(hashedPassword));
         }
 
         private Email CreateUserEmail(User user, string requestUrl)
