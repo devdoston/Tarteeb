@@ -211,7 +211,6 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Users
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-
         public async Task ShouldThrowValidationExceptionOnAddIfEmailIsInvalidAndLogItAsync(string? invalidText)
         {
             //given
@@ -224,8 +223,11 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Users
 
             invalidUserException.AddData(
                 key: nameof(User.Email),
-                values: "Email is required",
-                        "Email is not valid");
+                values: new string[]
+                {
+                "Text is required",
+                "Email is not valid" 
+                });
 
             var expectedUserValidationException =
                 new UserValidationException(invalidUserException);
@@ -253,7 +255,6 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Users
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-
         }
     }
 }

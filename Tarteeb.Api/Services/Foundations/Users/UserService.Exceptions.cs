@@ -79,15 +79,6 @@ namespace Tarteeb.Api.Services.Foundations.Users
 
                 throw CreateAndLogServiceException(failedUserServiceException);
             }
-            /* */
-            catch (InvalidUserException invalidUserException)
-            {
-                var expectedUserValidationException =
-                    new UserValidationException(invalidUserException);
-
-                throw CreateAndLogServiceException(expectedUserValidationException);
-            }
-            /* */
         }
 
         private IQueryable<User> TryCatch(ReturningUsersFunction returningUsersFunction)
@@ -167,11 +158,5 @@ namespace Tarteeb.Api.Services.Foundations.Users
 
             return userDependencyValidationException;
         }
-
-        private InvalidUserException CreateAndLogValidationException(Xeption exception)
-        {
-            
-        }
-
     }
 }

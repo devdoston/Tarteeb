@@ -42,7 +42,7 @@ namespace Tarteeb.Api.Services.Foundations.Users
         {
             Validate(
                 (Rule: IsInvalid(email), Parameter: nameof(User.Email)),
-                (Rule: IsValidEmail(email), Parameter: nameof(User.Email)));
+                (Rule: IsValidEmail(email ?? ""), Parameter: nameof(User.Email)));
         }
 
         private static dynamic IsValidEmail(string email) => new 
