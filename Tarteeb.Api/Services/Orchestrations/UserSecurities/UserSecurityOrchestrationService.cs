@@ -13,6 +13,7 @@ using Tarteeb.Api.Models.Orchestrations.UserTokens;
 using Tarteeb.Api.Services.Foundations.Emails;
 using Tarteeb.Api.Services.Foundations.Securities;
 using Tarteeb.Api.Services.Foundations.Users;
+using Tarteeb.Api.Services.Orchestrations.UserSecurities;
 
 namespace Tarteeb.Api.Services.Orchestrations
 {
