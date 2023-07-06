@@ -63,6 +63,19 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Users
             };
         }
 
+        public static TheoryData<string> InvalidEmails()
+        {
+
+            return new TheoryData<string>
+            {
+                null,
+                "",
+                " ",
+                GetRandomString(),
+            };
+        }
+
+
         private static User CreateRandomUser() =>
             CreateUserFiller(dates: GetRandomDateTimeOffset()).Create();
 

@@ -224,7 +224,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Users
 
             invalidUserException.AddData(
                 key: nameof(User.Email),
-                values: "Email is required");
+                values: "Email is required",
+                        "Email is not valid");
 
             var expectedUserValidationException =
                 new UserValidationException(invalidUserException);
