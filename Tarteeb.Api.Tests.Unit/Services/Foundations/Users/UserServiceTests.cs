@@ -63,6 +63,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Users
             };
         }
 
+        private static string CreateValidEmail() =>
+            new MnemonicString().GetValue() + "@gmail.com";
+
         private static User CreateRandomUser() =>
             CreateUserFiller(dates: GetRandomDateTimeOffset()).Create();
 

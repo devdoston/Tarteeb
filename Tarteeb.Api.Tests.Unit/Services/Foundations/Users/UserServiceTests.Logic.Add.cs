@@ -21,6 +21,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Foundations.Users
             // given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             User randomUser = CreateRandomUser(randomDateTime);
+            randomUser.Email = CreateValidEmail();
             User inputUser = randomUser;
             User persistedUser = inputUser;
             User expectedUser = persistedUser.DeepClone();
