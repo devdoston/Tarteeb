@@ -16,7 +16,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
     {
         [Theory]
         [MemberData(nameof(UserDependencyExceptions))]
-        public void ShoudThrowDependencyExceptionOnRetrieveIfDependencyErrorOccursAndLogItAsync(
+        public void ShouldThrowDependencyExceptionOnRetrieveIfDependencyErrorOccursAndLogItAsync(
             Xeption dependencyException)
         {
             // given
